@@ -59,7 +59,7 @@ public class SQSConnectionTest {
 
         int numberOfMessagesToPrefetch = 10;
         AmazonSQSMessagingClientWrapper amazonSQSClientJMSWrapper = mock(AmazonSQSMessagingClientWrapper.class);
-        sqsConnection = spy(new SQSConnection(amazonSQSClientJMSWrapper, numberOfMessagesToPrefetch));
+        sqsConnection = spy(new SQSConnection(amazonSQSClientJMSWrapper, new ProviderConfiguration().withNumberOfMessagesToPrefetch(numberOfMessagesToPrefetch)));
 
         session1 = mock(SQSSession.class);
         session2 = mock(SQSSession.class);

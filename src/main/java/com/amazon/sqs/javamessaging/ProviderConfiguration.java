@@ -17,6 +17,8 @@ package com.amazon.sqs.javamessaging;
 public class ProviderConfiguration {
     private int numberOfMessagesToPrefetch;
 
+    private int nackTimeout;
+
     public ProviderConfiguration() {
         // Set default numberOfMessagesToPrefetch to MIN_BATCH.
         this.numberOfMessagesToPrefetch = SQSMessagingClientConstants.MIN_BATCH;        
@@ -35,6 +37,22 @@ public class ProviderConfiguration {
 
     public ProviderConfiguration withNumberOfMessagesToPrefetch(int numberOfMessagesToPrefetch) {
         setNumberOfMessagesToPrefetch(numberOfMessagesToPrefetch);
+        return this;
+    }
+
+    public int getNackTimeout() {
+        return nackTimeout;
+    }
+
+    public void setNackTimeout(int nackTimeout) {
+        if (nackTimeout < SQSMessagingClientConstants.MIN_NACK_TIMEOUT) {
+            throw new IllegalArgumentException(String.format("Invalid nack timeout. Provided value '%1$s' cannot be smaller than '%2$s'", nackTimeout, SQSMessagingClientConstants.MIN_NACK_TIMEOUT));
+        }
+        this.nackTimeout = nackTimeout;
+    }
+
+    public ProviderConfiguration withNackTimeout(int nackTimeout) {
+        setNackTimeout(nackTimeout);
         return this;
     }
 

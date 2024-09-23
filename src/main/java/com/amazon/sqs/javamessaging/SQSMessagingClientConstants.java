@@ -30,6 +30,8 @@ public class SQSMessagingClientConstants {
     
     public static final int MIN_PREFETCH = 0;
 
+    public static final int MIN_NACK_TIMEOUT = 0;
+
     /**
      * JMSMessage available user property types, which are mapped to message
      * attribute data types

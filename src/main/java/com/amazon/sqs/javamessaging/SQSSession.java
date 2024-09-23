@@ -194,7 +194,7 @@ public class SQSSession implements Session, QueueSession {
         this.amazonSQSClient = parentSQSConnection.getWrappedAmazonSQSClient();
         this.acknowledgeMode = acknowledgeMode;
         this.acknowledger = this.acknowledgeMode.createAcknowledger(amazonSQSClient, this);
-        this.negativeAcknowledger = new NegativeAcknowledger(amazonSQSClient);
+        this.negativeAcknowledger = new NegativeAcknowledger(amazonSQSClient, parentSQSConnection.getNackTimeout());
         this.sqsSessionRunnable = new SQSSessionCallbackScheduler(this, acknowledgeMode, acknowledger, negativeAcknowledger);
         this.executor = Executors.newSingleThreadExecutor(SESSION_THREAD_FACTORY);
         this.messageConsumers = messageConsumers;

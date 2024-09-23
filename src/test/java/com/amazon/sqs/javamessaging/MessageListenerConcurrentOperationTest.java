@@ -42,7 +42,7 @@ public class MessageListenerConcurrentOperationTest {
 
     private static final String QUEUE_URL = "queueUrl";
     private static final String QUEUE_NAME = "queueName";
-    private static final int NUMBER_OF_MESSAGES_TO_PREFETCH = 10;
+    private static final ProviderConfiguration PROVIDER_CONFIGURATION = new ProviderConfiguration().withNumberOfMessagesToPrefetch(10);
 
     private AmazonSQSMessagingClientWrapper amazonSQSClient;
     private SQSMessageConsumerPrefetch.MessageManager msgManager;
@@ -84,7 +84,7 @@ public class MessageListenerConcurrentOperationTest {
         SQSQueueDestination sqsDestination = new SQSQueueDestination(QUEUE_NAME, QUEUE_URL);
         amazonSQSClient = mock(AmazonSQSMessagingClientWrapper.class);
 
-        connection = new SQSConnection(amazonSQSClient, NUMBER_OF_MESSAGES_TO_PREFETCH);
+        connection = new SQSConnection(amazonSQSClient, PROVIDER_CONFIGURATION);
         session = new SQSSession(connection, AcknowledgeMode.ACK_AUTO);
         SQSSessionCallbackScheduler sqsSessionRunnable = new SQSSessionCallbackScheduler(session,
                 AcknowledgeMode.ACK_AUTO, acknowledger, negativeAcknowledger);
@@ -92,7 +92,7 @@ public class MessageListenerConcurrentOperationTest {
         SQSMessageConsumer consumer = mock(SQSMessageConsumer.class);
 
         SQSMessageConsumerPrefetch preFetcher = new SQSMessageConsumerPrefetch(sqsSessionRunnable, acknowledger,
-                negativeAcknowledger, sqsDestination, amazonSQSClient, NUMBER_OF_MESSAGES_TO_PREFETCH);
+                negativeAcknowledger, sqsDestination, amazonSQSClient, PROVIDER_CONFIGURATION.getNumberOfMessagesToPrefetch());
         preFetcher.setMessageConsumer(consumer);
 
         msgManager = new SQSMessageConsumerPrefetch.MessageManager(preFetcher, mock(SQSMessage.class));
@@ -125,7 +125,7 @@ public class MessageListenerConcurrentOperationTest {
 
         // Test session close operation with create producer operation
         for (int i = 0; i < 10; ++i) {
-            connection = new SQSConnection(amazonSQSClient, NUMBER_OF_MESSAGES_TO_PREFETCH);
+            connection = new SQSConnection(amazonSQSClient, PROVIDER_CONFIGURATION);
             session = (SQSSession) connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
             testConcurrentExecution(msgListenerCreatesProducer, closeSessionOperation);
@@ -134,7 +134,7 @@ public class MessageListenerConcurrentOperationTest {
 
         // Test session close operation with create consumer operation
         for (int i = 0; i < 10; ++i) {
-            connection = new SQSConnection(amazonSQSClient, NUMBER_OF_MESSAGES_TO_PREFETCH);
+            connection = new SQSConnection(amazonSQSClient, PROVIDER_CONFIGURATION);
             session = (SQSSession) connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
             testConcurrentExecution(msgListenerCreatesConsumer, closeSessionOperation);
@@ -169,7 +169,7 @@ public class MessageListenerConcurrentOperationTest {
 
         // Test connection start operation with create producer operation
         for (int i = 0; i < 10; ++i) {
-            connection = new SQSConnection(amazonSQSClient, NUMBER_OF_MESSAGES_TO_PREFETCH);
+            connection = new SQSConnection(amazonSQSClient, PROVIDER_CONFIGURATION);
             session = (SQSSession) connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
             testConcurrentExecution(msgListenerCreatesProducer, startConnectionOperation);
@@ -178,7 +178,7 @@ public class MessageListenerConcurrentOperationTest {
 
         // Test connection start operation with create consumer operation
         for (int i = 0; i < 10; ++i) {
-            connection = new SQSConnection(amazonSQSClient, NUMBER_OF_MESSAGES_TO_PREFETCH);
+            connection = new SQSConnection(amazonSQSClient, PROVIDER_CONFIGURATION);
             session = (SQSSession) connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
             testConcurrentExecution(msgListenerCreatesConsumer, startConnectionOperation);
@@ -211,7 +211,7 @@ public class MessageListenerConcurrentOperationTest {
 
         // Test connection close operation with create producer operation
         for (int i = 0; i < 10; ++i) {
-            connection = new SQSConnection(amazonSQSClient, NUMBER_OF_MESSAGES_TO_PREFETCH);
+            connection = new SQSConnection(amazonSQSClient, PROVIDER_CONFIGURATION);
             session = (SQSSession) connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
             testConcurrentExecution(msgListenerCreatesProducer, closeConnectionOperation);
@@ -219,7 +219,7 @@ public class MessageListenerConcurrentOperationTest {
 
         // Test connection close operation with create consumer operation
         for (int i = 0; i < 10; ++i) {
-            connection = new SQSConnection(amazonSQSClient, NUMBER_OF_MESSAGES_TO_PREFETCH);
+            connection = new SQSConnection(amazonSQSClient, PROVIDER_CONFIGURATION);
             session = (SQSSession) connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
             testConcurrentExecution(msgListenerCreatesConsumer, closeConnectionOperation);
@@ -254,7 +254,7 @@ public class MessageListenerConcurrentOperationTest {
 
         // Test connection stop operation with create producer operation
         for (int i = 0; i < 10; ++i) {
-            connection = new SQSConnection(amazonSQSClient, NUMBER_OF_MESSAGES_TO_PREFETCH);
+            connection = new SQSConnection(amazonSQSClient, PROVIDER_CONFIGURATION);
             session = (SQSSession) connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
             testConcurrentExecution(msgListenerCreatesProducer, stopConnectionOperation);
@@ -263,7 +263,7 @@ public class MessageListenerConcurrentOperationTest {
 
         // Test connection stop operation with create consumer operation
         for (int i = 0; i < 10; ++i) {
-            connection = new SQSConnection(amazonSQSClient, NUMBER_OF_MESSAGES_TO_PREFETCH);
+            connection = new SQSConnection(amazonSQSClient, PROVIDER_CONFIGURATION);
             session = (SQSSession) connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
             testConcurrentExecution(msgListenerCreatesConsumer, stopConnectionOperation);

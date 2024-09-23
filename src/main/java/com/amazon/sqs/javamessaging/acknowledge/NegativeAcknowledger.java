@@ -37,12 +37,18 @@ import java.util.List;
  */
 public class NegativeAcknowledger extends BulkSQSOperation {
 
-    private static final int NACK_TIMEOUT = 0;
+    private final int nackTimeout;
 
     private final AmazonSQSMessagingClientWrapper amazonSQSClient;
 
     public NegativeAcknowledger(AmazonSQSMessagingClientWrapper amazonSQSClient) {
         this.amazonSQSClient = amazonSQSClient;
+        this.nackTimeout = 0;
+    }
+
+    public NegativeAcknowledger(AmazonSQSMessagingClientWrapper amazonSQSClient, int nackTimeout) {
+        this.amazonSQSClient = amazonSQSClient;
+        this.nackTimeout = nackTimeout;
     }
     
     /**
@@ -96,7 +102,7 @@ public class NegativeAcknowledger extends BulkSQSOperation {
             ChangeMessageVisibilityBatchRequestEntry changeMessageVisibilityBatchRequestEntry = ChangeMessageVisibilityBatchRequestEntry.builder()
             		.id(Integer.toString(batchId))
             		.receiptHandle(messageReceiptHandle)
-            		.visibilityTimeout(NACK_TIMEOUT)
+            		.visibilityTimeout(nackTimeout)
             		.build();
             nackEntries.add(changeMessageVisibilityBatchRequestEntry);
             batchId++;

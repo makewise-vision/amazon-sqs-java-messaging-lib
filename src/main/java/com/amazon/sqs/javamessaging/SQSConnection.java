@@ -91,7 +91,7 @@ public class SQSConnection implements Connection, QueueConnection {
      * single consumer cannot prefetch more than 10 messages in a single call to SQS,
      * but it will make multiple calls as necessary.
      */
-    private final int numberOfMessagesToPrefetch;
+    private final ProviderConfiguration providerConfiguration;
     private volatile boolean closed = false;
     private volatile boolean closing = false;
 
@@ -106,9 +106,9 @@ public class SQSConnection implements Connection, QueueConnection {
 
     private final Set<Session> sessions = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
-    SQSConnection(AmazonSQSMessagingClientWrapper amazonSQSClientJMSWrapper, int numberOfMessagesToPrefetch) {
+    SQSConnection(AmazonSQSMessagingClientWrapper amazonSQSClientJMSWrapper, ProviderConfiguration providerConfiguration) {
         amazonSQSClient = amazonSQSClientJMSWrapper;
-        this.numberOfMessagesToPrefetch = numberOfMessagesToPrefetch;
+        this.providerConfiguration = providerConfiguration;
 
     }
     
@@ -135,9 +135,13 @@ public class SQSConnection implements Connection, QueueConnection {
     }
     
     int getNumberOfMessagesToPrefetch() {
-        return numberOfMessagesToPrefetch;
+        return providerConfiguration.getNumberOfMessagesToPrefetch();
     }
-    
+
+    int getNackTimeout() {
+        return providerConfiguration.getNackTimeout();
+    }
+
     /**
      * Creates a <code>QueueSession</code>
      * 
